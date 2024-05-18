@@ -53,11 +53,7 @@ public class Player : MonoBehaviour
 
     private void UpdatePaddle()
     {
-        for (int i = 0; i < 8; i++)
-        {
-            finalPaddles[i].SetActive(false);
-            prePaddles[i].SetActive(false);
-        }
+        
 
         int xRow1 = 0;
         int xRow2 = 0;
@@ -87,6 +83,11 @@ public class Player : MonoBehaviour
         if (hRow1 + hRow2 + hRow3 == 0)
         {
             finalResult = (xRow1 % 2) * 4 + (xRow2 % 2) * 2 + xRow3 % 2;
+            for (int i = 0; i < 8; i++)
+            {
+                finalPaddles[i].SetActive(false);
+                prePaddles[i].SetActive(false);
+            }
 
             EnableFinalPaddle(finalResult);
         }
@@ -95,12 +96,38 @@ public class Player : MonoBehaviour
         {
             if (ballTransform.position.x > 3.5)
             {
-                int rand = Random.Range(0, 8);
-                while (!prePaddles[rand].activeSelf)
-                    rand = Random.Range(0, 8);
+                List<int> activePrePaddles = new List<int>();
 
-                EnableFinalPaddle(rand);
+                // Find the indices of active prePaddles
+                for (int i = 0; i < prePaddles.Length; i++)
+                {
+                    if (prePaddles[i].activeSelf)
+                    {
+                        activePrePaddles.Add(i);
+                    }
+                }
+
+                if (activePrePaddles.Count > 0)
+                {
+                    int randIndex = Random.Range(0, activePrePaddles.Count);
+                    int selectedPaddle = activePrePaddles[randIndex];
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        finalPaddles[i].SetActive(false);
+                        prePaddles[i].SetActive(false);
+                    }
+
+                    EnableFinalPaddle(selectedPaddle);
+                }
+
                 return;
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                finalPaddles[i].SetActive(false);
+                prePaddles[i].SetActive(false);
             }
 
             if (hRow1 > 0)
@@ -168,12 +195,12 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
             currentRow = (currentRow + 1) % 3;
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             currentRow = (currentRow - 1) % 3;
 
@@ -181,12 +208,12 @@ public class Player : MonoBehaviour
                 currentRow += 3;
         }
 
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             currentCol = (currentCol + 1) % 10;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             currentCol = (currentCol - 1) % 10;
 
