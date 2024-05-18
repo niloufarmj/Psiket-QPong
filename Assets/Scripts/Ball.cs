@@ -14,30 +14,42 @@ public class Ball : MonoBehaviour
 
     public GameObject loseShader, winShader;
 
-    IEnumerator DelayedProcess()
+    public GameObject[] ballObjects;
+
+    IEnumerator DelayedProcess(int direction)
     {
         GameManager.instance.cameraShake.StartShake(0.1f, 0.5f);
-        transform.position = new Vector2(0.049f, 0.822f);
         rg.velocity = new Vector2(0, 0);
-        // Wait for 2 seconds
+        for (int i = 0; i < ballObjects.Length; i++)
+            ballObjects[i].SetActive(false);
+
+        float y_position = Random.Range(-1.8f, 3.3f);
+        float x_position = 3.44f * direction;
+        transform.position = new Vector2(x_position, y_position);
+
+        
+        // Wait for 1 seconds
         yield return new WaitForSeconds(1f);
 
-        InitBall();
+        InitBall(direction);
     }
 
     void Start()
     {
-        InitBall();
+        InitBall(1);
     }
 
-    void Launch()
+    void Launch(int direction)
     {
         // Start the coroutine
-        StartCoroutine(DelayedProcess()); 
+        StartCoroutine(DelayedProcess(direction)); 
     }
 
-    void InitBall()
+    void InitBall(int direction)
     {
+        for (int i = 0; i < ballObjects.Length; i++)
+            ballObjects[i].SetActive(true);
+
         textL.gameObject.SetActive(true);
         textR.gameObject.SetActive(true);
 
@@ -47,7 +59,7 @@ public class Ball : MonoBehaviour
         loseShader.SetActive(false);
         winShader.SetActive(false);
 
-        float x_direction = Random.Range(-1f, 1f) > 0 ? 1 : -1;
+        float x_direction = -1 * direction;
         float y_direction = Random.Range(-1f, 1f) > 0 ? 1 : -1;
         rg.velocity = new Vector2(x_direction * speed, y_direction * speed);
         EmitParticle(32);
@@ -63,7 +75,7 @@ public class Ball : MonoBehaviour
             textR.gameObject.SetActive(false);
             textRUp.gameObject.SetActive(true);
             winShader.SetActive(true);
-            Launch();
+            Launch(-1);
         }
         else if (collision.gameObject.tag == "Right")
         {
@@ -73,7 +85,7 @@ public class Ball : MonoBehaviour
             textL.gameObject.SetActive(false);
             textLUp.gameObject.SetActive(true);
             loseShader.SetActive(true);
-            Launch();
+            Launch(1);
         }
 
         if (collision.gameObject.tag == "Wall")
