@@ -16,28 +16,80 @@ public class Ball : MonoBehaviour
 
     public GameObject[] ballObjects;
 
+    public Vector2 currentVelocity;
+
+    public bool pausedLocked = false;
+
     IEnumerator DelayedProcess(int direction)
     {
         GameManager.instance.cameraShake.StartShake(0.1f, 0.5f);
-        rg.velocity = new Vector2(0, 0);
-        for (int i = 0; i < ballObjects.Length; i++)
-            ballObjects[i].SetActive(false);
+        StopBall();
 
         float y_position = Random.Range(-1.8f, 3.3f);
-        float x_position = 3.44f * direction;
+        float x_position = 6.1f * direction;
         transform.position = new Vector2(x_position, y_position);
 
+        pausedLocked = true;
         
         // Wait for 1 seconds
         yield return new WaitForSeconds(1f);
 
+        pausedLocked = false;
+
         InitBall(direction);
+    }
+
+    public void StopBall()
+    {
+        rg.velocity = new Vector2(0, 0);
+        for (int i = 0; i < ballObjects.Length; i++)
+            ballObjects[i].SetActive(false);
     }
 
     void Start()
     {
+        speed = GameManager.instance.data.ballSpeed;
         InitBall(1);
     }
+
+    public void Update()
+    {
+        
+
+        if (GameManager.instance.reset)
+        {
+            ResetGame();
+            GameManager.instance.reset = false;
+        }
+    }
+
+    public void PauseBall()
+    {
+        currentVelocity = rg.velocity;
+        StopBall();
+    }
+    public void ResumeBall()
+    {
+        rg.velocity = currentVelocity;
+        for (int i = 0; i < ballObjects.Length; i++)
+            ballObjects[i].SetActive(true);
+    }
+
+    public void ResetGame()
+    {
+        float y_position = Random.Range(-1.8f, 3.3f);
+        float x_position = 3.44f * 1;
+        transform.position = new Vector2(x_position, y_position);
+
+        leftScore = 0;
+        rightScore = 0;
+
+        textR.text = rightScore.ToString();
+        textL.text = leftScore.ToString();
+
+        InitBall(1);
+    }
+
 
     void Launch(int direction)
     {

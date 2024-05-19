@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
 
     public Transform ballTransform;
     
-    private void EnableSelection(int i, int j)
+    private void EnableSelection()
     {
         for (int s = 0; s < 3; s++)
         {
@@ -25,19 +25,25 @@ public class Player : MonoBehaviour
                 selections[s].cols[k].SetActive(false);
             }
         }
-        selections[i].cols[j].SetActive(true);
+        selections[currentRow].cols[currentCol].SetActive(true);
     }
 
-    private void EnableHGate(int i, int j)
+    public void EnableHGate()
     {
-        xGates[i].cols[j].SetActive(false);
-        hGates[i].cols[j].SetActive(!hGates[i].cols[j].activeSelf);
+        if (GameManager.instance.paused)
+            return;
+
+        xGates[currentRow].cols[currentCol].SetActive(false);
+        hGates[currentRow].cols[currentCol].SetActive(!hGates[currentRow].cols[currentCol].activeSelf);
     }
 
-    private void EnableXGate(int i, int j)
+    public void EnableXGate()
     {
-        hGates[i].cols[j].SetActive(false);
-        xGates[i].cols[j].SetActive(!xGates[i].cols[j].activeSelf);
+        if (GameManager.instance.paused)
+            return;
+
+        hGates[currentRow].cols[currentCol].SetActive(false);
+        xGates[currentRow].cols[currentCol].SetActive(!xGates[currentRow].cols[currentCol].activeSelf);
     }
 
     private void EnableFinalPaddle(int index)
@@ -53,8 +59,6 @@ public class Player : MonoBehaviour
 
     private void UpdatePaddle()
     {
-        
-
         int xRow1 = 0;
         int xRow2 = 0;
         int xRow3 = 0;
@@ -94,7 +98,7 @@ public class Player : MonoBehaviour
 
         else
         {
-            if (ballTransform.position.x > 3.5)
+            if (ballTransform.position.x > 6.3f)
             {
                 List<int> activePrePaddles = new List<int>();
 
@@ -193,45 +197,57 @@ public class Player : MonoBehaviour
         
     }
 
+    public void MoveRight()
+    {
+        if (GameManager.instance.paused)
+            return;
+
+        currentCol = (currentCol + 1) % 10;
+    }
+
+    public void MoveLeft()
+    {
+        if (GameManager.instance.paused)
+            return;
+
+        currentCol = (currentCol - 1) % 10;
+
+        if (currentCol < 0)
+            currentCol += 10;
+    }
+
+    public void MoveUp()
+    {
+        if (GameManager.instance.paused)
+            return;
+
+        currentRow = (currentRow - 1) % 3;
+
+        if (currentRow < 0)
+            currentRow += 3;
+    }
+
+    public void MoveDown()
+    {
+        if (GameManager.instance.paused)
+            return;
+
+        currentRow = (currentRow + 1) % 3;
+    }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-        {
-            currentRow = (currentRow + 1) % 3;
-        }
-
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-        {
-            currentRow = (currentRow - 1) % 3;
-
-            if (currentRow < 0)
-                currentRow += 3;
-        }
-
-        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-        {
-            currentCol = (currentCol + 1) % 10;
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-        {
-            currentCol = (currentCol - 1) % 10;
-
-            if (currentCol < 0)
-                currentCol += 10;
-        }
-
+        
         if (Input.GetKeyDown(KeyCode.X))
         {
-            EnableXGate(currentRow, currentCol);
+            EnableXGate();
         }
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            EnableHGate(currentRow, currentCol);
+            EnableHGate();
         }
 
-        EnableSelection(currentRow, currentCol);
+        EnableSelection();
         UpdatePaddle();
     }
 }
