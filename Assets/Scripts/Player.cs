@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -18,7 +19,7 @@ public class Player : MonoBehaviour
     
     private void EnableSelection()
     {
-        for (int s = 0; s < 3; s++)
+        for (int s = 0; s < selections.Length; s++)
         {
             for (int k = 0; k < 10; k++)
             {
@@ -59,35 +60,29 @@ public class Player : MonoBehaviour
 
     private void UpdatePaddle()
     {
-        int xRow1 = 0;
-        int xRow2 = 0;
-        int xRow3 = 0;
-        int hRow1 = 0;
-        int hRow2 = 0;
-        int hRow3 = 0;
+        int[] xRows = new int[selections.Length];
+        int[] hRows = new int[selections.Length];
         int finalResult = 0;
 
         for (int i = 0; i < 10; i++)
         {
-            if (xGates[0].cols[i].activeSelf)
-                xRow1 += 1;
-            if (xGates[1].cols[i].activeSelf)
-                xRow2 += 1;
-            if (xGates[2].cols[i].activeSelf)
-                xRow3 += 1;
-
-            if (hGates[0].cols[i].activeSelf)
-                hRow1 += 1;
-            if (hGates[1].cols[i].activeSelf)
-                hRow2 += 1;
-            if (hGates[2].cols[i].activeSelf)
-                hRow3 += 1;
+            for (int j = 0; j < selections.Length; j++)
+            {
+                if (xGates[j].cols[i].activeSelf)
+                    xRows[j] += 1;
+                if (hGates[j].cols[i].activeSelf)
+                    hRows[j] += 1;
+            }
         }
 
-        if (hRow1 + hRow2 + hRow3 == 0)
+        if (hRows.Sum() == 0)
         {
-            finalResult = (xRow1 % 2) * 4 + (xRow2 % 2) * 2 + xRow3 % 2;
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < selections.Length; i++)
+            {
+                finalResult += (xRows[i] % 2) * (int)(Mathf.Pow(2, selections.Length - 1 - i));
+            }
+
+            for (int i = 0; i < finalPaddles.Length; i++)
             {
                 finalPaddles[i].SetActive(false);
                 prePaddles[i].SetActive(false);
@@ -98,7 +93,7 @@ public class Player : MonoBehaviour
 
         else
         {
-            if (ballTransform.position.x > 6.3f)
+            if (ballTransform.position.x > 6)
             {
                 List<int> activePrePaddles = new List<int>();
 
@@ -116,7 +111,7 @@ public class Player : MonoBehaviour
                     int randIndex = Random.Range(0, activePrePaddles.Count);
                     int selectedPaddle = activePrePaddles[randIndex];
 
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < finalPaddles.Length; i++)
                     {
                         finalPaddles[i].SetActive(false);
                         prePaddles[i].SetActive(false);
@@ -128,73 +123,63 @@ public class Player : MonoBehaviour
                 return;
             }
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < finalPaddles.Length; i++)
             {
                 finalPaddles[i].SetActive(false);
                 prePaddles[i].SetActive(false);
             }
 
-            if (hRow1 > 0)
+            int[] bits = new int[selections.Length];
+            for (int i = 0; i < selections.Length; i++)
             {
-                EnablePrePaddle(4 + (xRow2 % 2) * 2 + xRow3 % 2);
-                EnablePrePaddle((xRow2 % 2) * 2 + xRow3 % 2);
-
-                if (hRow2 > 0)
+                if (hRows[i] > 0)
                 {
-                    EnablePrePaddle(4 + 2 + xRow3 % 2);
-                    EnablePrePaddle(4 + xRow3 % 2);
-
-                    EnablePrePaddle(2 + xRow3 % 2);
-                    EnablePrePaddle(xRow3 % 2);
-
-                    if (hRow3 > 0)
-                    {
-                        EnablePrePaddle(4 + 2 + 1);
-                        EnablePrePaddle(4 + 2);
-
-                        EnablePrePaddle(4 + 1);
-                        EnablePrePaddle(4);
-
-                        EnablePrePaddle(2 + 1);
-                        EnablePrePaddle(2);
-
-                        EnablePrePaddle(1);
-                        EnablePrePaddle(0);
-                    }
+                    bits[i] = 2;
                 }
-                else if (hRow3 > 0)
+                else
                 {
-                    EnablePrePaddle(4 + (xRow2 % 2) * 2 + 1);
-                    EnablePrePaddle(4 + (xRow2 % 2) * 2);
-
-                    EnablePrePaddle((xRow2 % 2) * 2 + 1);
-                    EnablePrePaddle((xRow2 % 2) * 2);
+                    bits[i] = xRows[i] % 2;
                 }
             }
 
-            else if (hRow2 > 0)
-            {
-                EnablePrePaddle((xRow1 % 2) * 4 + 2 + xRow3 % 2);
-                EnablePrePaddle((xRow1 % 2) * 4 + xRow3 % 2);
-
-                if (hRow3 > 0)
-                {
-                    EnablePrePaddle((xRow1 % 2) * 4 + 2 + 1);
-                    EnablePrePaddle((xRow1 % 2) * 4 + 2);
-
-                    EnablePrePaddle((xRow1 % 2) * 4 + 1);
-                    EnablePrePaddle((xRow1 % 2) * 4);
-                }
-            }
-
-            else 
-            {
-                EnablePrePaddle((xRow1 % 2) * 4 + (xRow2 % 2) * 2 + 1);
-                EnablePrePaddle((xRow1 % 2) * 4 + (xRow2 % 2) * 2);
-            }
+            CalculatePrePaddles(bits);
 
         }
         
+    }
+
+    public void CalculatePrePaddles(int[] bits)
+    {
+        int result = 0;
+        for (int i = 0; i < bits.Length; i++)
+        {
+            if (bits[i] == 2)
+            {
+                int[] newBits0 = new int[bits.Length];
+                int[] newBits1 = new int[bits.Length];
+
+                for (int j = 0; j < bits.Length; j++)
+                {
+                    if (i == j)
+                    {
+                        newBits0[j] = 0;
+                        newBits1[j] = 1;
+                    }
+                    else
+                    {
+                        newBits0[j] = bits[j];
+                        newBits1[j] = bits[j];
+                    }
+                }
+                CalculatePrePaddles(newBits0);
+                CalculatePrePaddles(newBits1);
+                return;
+            }
+
+            result += bits[i] * (int)(Mathf.Pow(2, bits.Length - 1 - i));
+        }
+
+        EnablePrePaddle(result);
     }
 
     public void MoveRight()
@@ -221,10 +206,10 @@ public class Player : MonoBehaviour
         if (GameManager.instance.paused)
             return;
 
-        currentRow = (currentRow - 1) % 3;
+        currentRow = (currentRow - 1) % selections.Length;
 
         if (currentRow < 0)
-            currentRow += 3;
+            currentRow += selections.Length;
     }
 
     public void MoveDown()
@@ -232,7 +217,7 @@ public class Player : MonoBehaviour
         if (GameManager.instance.paused)
             return;
 
-        currentRow = (currentRow + 1) % 3;
+        currentRow = (currentRow + 1) % selections.Length;
     }
     void Update()
     {

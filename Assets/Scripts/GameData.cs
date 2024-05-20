@@ -5,4 +5,5 @@ public class GameData : ScriptableObject
 {
     public float aiSpeed;
     public float ballSpeed;
+    public int Qbits;
 }

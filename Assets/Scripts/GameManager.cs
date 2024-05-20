@@ -56,6 +56,11 @@ public class GameManager : MonoBehaviour
             HandleLeft();
         }
 
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            HandleSelect();
+        }
+
     }
 
     public void HandlePause()

@@ -1,19 +1,28 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class OptionsContrloller : MonoBehaviour
 {
     public Image[] optionBoarders;
-    public GameObjectStruct[] options;
     int currentSelected = 0;
 
+    public GameObject on, off;
+    public GameObject[] AIModes;
+    public GameObject[] ballModes;
+
+    public TextMeshProUGUI QbitNumber;
+
+    public int AIModeIndex = 1, ballModeIndex = 1;
     [SerializeField] public GameData data;
 
     void Start()
     {
-        optionBoarders[0].enabled = true;
+        if (!Application.isMobilePlatform)
+            optionBoarders[0].enabled = true;
     }
 
     public void MoveDown()
@@ -26,7 +35,7 @@ public class OptionsContrloller : MonoBehaviour
         currentSelected--;
 
         if (currentSelected < 0)
-            currentSelected += 3;
+            currentSelected += optionBoarders.Length;
     }
 
     // Update is called once per frame
@@ -34,67 +43,94 @@ public class OptionsContrloller : MonoBehaviour
     {
         UpdateValues();
 
-        UpdateSelection();
+        if (!Application.isMobilePlatform)
+            UpdateSelection();
 
-        currentSelected = currentSelected % 3;
+        currentSelected %= optionBoarders.Length;
     }
 
     private void UpdateSelection()
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < optionBoarders.Length; i++)
         {
-            if (i == currentSelected % 3)
-                optionBoarders[i].enabled = true;
-            else
-                optionBoarders[i].enabled = false;
+            optionBoarders[i].enabled = (i == currentSelected % optionBoarders.Length);
         }
     }
 
-    public void ReduceAmount()
+    public void HandleRight()
     {
-        for (int i = 2; i < 5; i++)
-        {
-            if (i != 0 && !options[currentSelected].cols[i].activeSelf)
-            {
-                options[currentSelected].cols[i - 1].SetActive(false);
-                if (currentSelected == 1)
-                {
-                    data.aiSpeed -= 1;
-                }
-                return;
-            }
-        }
-        options[currentSelected].cols[4].SetActive(false);
+        if (currentSelected == 0)
+            SwitchSound();
+        else if (currentSelected == 1)
+            SwitchAIMode(1);
+        else if (currentSelected == 2)
+            SwitchBallMode(1);
+        else
+            SwitchQBits();
     }
 
-    public void IncreaseAmount()
+    public void HandleLeft()
     {
-        for (int i = 4; i >= 0; i--)
-        {
-            if (i != 4 && options[currentSelected].cols[i].activeSelf)
-            {
-                options[currentSelected].cols[i + 1].SetActive(true);
+        if (currentSelected == 0)
+            SwitchSound();
+        else if (currentSelected == 1)
+            SwitchAIMode(-1);
+        else if (currentSelected == 2)
+            SwitchBallMode(-1);
+        else
+            SwitchQBits();
+    }
 
-                return;
-            }
+    public void SwitchSound()
+    {
+        on.gameObject.SetActive(!on.gameObject.activeSelf);
+        off.gameObject.SetActive(!off.gameObject.activeSelf);
+    }
+
+    public void SwitchAIMode(int value)
+    {
+        AIModeIndex += value;
+        if (AIModeIndex < 0)
+            AIModeIndex += ballModes.Length;
+
+        AIModeIndex %= ballModes.Length;
+    }
+
+    public void SwitchBallMode(int value)
+    {
+        ballModeIndex += value;
+        if (ballModeIndex < 0)
+            ballModeIndex += ballModes.Length;
+
+        ballModeIndex %= ballModes.Length;
+    }
+
+    public void SwitchQBits()
+    {
+        switch (Convert.ToInt32(QbitNumber.text))
+        {
+            case 2:
+                QbitNumber.text = "3";
+                data.Qbits = 3;
+                break;
+            case 3:
+                QbitNumber.text = "2";
+                data.Qbits = 2;
+                break;
         }
-        
     }
 
     private void UpdateValues()
     {
-        float aiSpeed = 1.7f;
-        float ballSpeed = 1.7f;
-
-        for (int i = 1; i < 5; i++)
+        for (int i = 0; i < AIModes.Length; i++)
         {
-            if (options[1].cols[i].activeSelf)
-                aiSpeed += 0.7f;
-            if (options[2].cols[i].activeSelf)
-                ballSpeed += 0.7f;
+            AIModes[i].SetActive(false);
+            ballModes[i].SetActive(false);
         }
+        AIModes[AIModeIndex].SetActive(true);
+        ballModes[ballModeIndex].SetActive(true);
 
-        data.aiSpeed = aiSpeed;
-        data.ballSpeed = ballSpeed;
+        data.aiSpeed = 1.7f + AIModeIndex * 0.7f;
+        data.ballSpeed = 1.7f + ballModeIndex * 0.7f;
     }
 }

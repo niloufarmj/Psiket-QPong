@@ -9,10 +9,10 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] public Button[] selectedButtons;
     int currentSelected = 0;
 
+    public GameData data;
+
     public GameObject optionsMenu;
     public GameObject creditsMenu;
-
-    bool locked = false;
 
 
     public void MoveDown()
@@ -32,7 +32,7 @@ public class MainMenuController : MonoBehaviour
     {
         if (currentSelected % 3 == 0)
         {
-            SceneManager.LoadScene("Game");
+            StartGame();
         }
 
         if (currentSelected % 3 == 1)
@@ -42,23 +42,37 @@ public class MainMenuController : MonoBehaviour
 
         if (currentSelected % 3 == 2)
         {
-            creditsMenu.SetActive(true);
+            ShowCredits();
         }
+    }
+
+    public void StartGame()
+    {
+        if (data.Qbits == 2)
+            SceneManager.LoadScene("Game 2Bits");
+        else
+            SceneManager.LoadScene("Game 3Bits");
+    }
+
+    public void ShowCredits()
+    {
+        creditsMenu.SetActive(true);
+        UIManager.instance.mainMenuLocked = true;
     }
 
     void Update()
     {
-        UpdateSelection();
+        if (!Application.isMobilePlatform)
+        {
+            UpdateSelection();
+        }
     }
 
     void UpdateSelection()
     {
         for (int i = 0; i < 3; i++)
         {
-            if (i == currentSelected % 3)
-                selectedButtons[i].gameObject.SetActive(true);
-            else
-                selectedButtons[i].gameObject.SetActive(false);
+            selectedButtons[i].gameObject.SetActive((i == currentSelected % 3));
         }
     }
 }

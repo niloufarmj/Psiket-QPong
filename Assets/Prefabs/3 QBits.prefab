@@ -550,7 +550,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4207955462937190148}
   m_Layer: 5
-  m_Name: QBits
+  m_Name: 3 QBits
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

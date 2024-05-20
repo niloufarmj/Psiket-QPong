@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -13,16 +14,22 @@ public class UIManager : MonoBehaviour
 
     public GameObject optionsCanvas, creditsCanvas;
 
-    public GameObject mobileControls;
+    public GameObject optionsSelected, creditsSelected;
     public bool mainMenuLocked = false;
 
+    public Image[] optionBoarders;
 
     private void Start()
     {
         instance = this;
         data.aiSpeed = 3.1f;
         data.ballSpeed = 2.4f;
-        mobileControls.SetActive(Application.isMobilePlatform);
+        data.Qbits = 3;
+        optionsSelected.SetActive(Application.isMobilePlatform);
+        creditsSelected.SetActive(Application.isMobilePlatform);
+
+        for (int i = 0; i < optionBoarders.Length; i++)
+            optionBoarders[i].enabled = !Application.isMobilePlatform;
     }
 
 
@@ -107,7 +114,7 @@ public class UIManager : MonoBehaviour
     {
         if (optionsCanvas.activeSelf)
         {
-            optoinController.IncreaseAmount();
+            optoinController.HandleRight();
         }
     }
 
@@ -115,7 +122,7 @@ public class UIManager : MonoBehaviour
     {
         if (optionsCanvas.activeSelf)
         {
-            optoinController.ReduceAmount();
+            optoinController.HandleLeft();
         }
     }
 
