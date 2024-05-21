@@ -11,8 +11,9 @@ public class UIManager : MonoBehaviour
 
     public MainMenuController mainMenuController;
     public OptionsContrloller optoinController;
+    public StartController startController;
 
-    public GameObject optionsCanvas, creditsCanvas;
+    public GameObject optionsCanvas, creditsCanvas, startCanvas;
 
     public GameObject optionsSelected, creditsSelected;
     public bool mainMenuLocked = false;
@@ -92,6 +93,10 @@ public class UIManager : MonoBehaviour
             {
                 optoinController.MoveDown();
             }
+            else if (startCanvas.activeSelf)
+            {
+                startController.MoveDown();
+            }
         }
     }
 
@@ -106,6 +111,10 @@ public class UIManager : MonoBehaviour
             if (optionsCanvas.activeSelf)
             {
                 optoinController.MoveUp();
+            }
+            else if (startCanvas.activeSelf)
+            {
+                startController.MoveUp();
             }
         }
     }
@@ -132,6 +141,13 @@ public class UIManager : MonoBehaviour
         {
             mainMenuController.Select();
         }
+        else
+        {
+            if (startCanvas.activeSelf)
+            {
+                startController.Select();
+            }
+        }
     }
 
     public void HandleReturn()
@@ -140,6 +156,7 @@ public class UIManager : MonoBehaviour
         {
             optionsCanvas.SetActive(false);
             creditsCanvas.SetActive(false);
+            startCanvas.SetActive(false);
             mainMenuLocked = false;
         }
     }

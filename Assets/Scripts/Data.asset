@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aiSpeed: 3.1
   ballSpeed: 2.4
+  Qbits: 3
+  isPvp: 1

@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     public GameObject[] finalPaddles;
     public GameObject[] prePaddles;
 
+    public float threshold;
+
     int currentRow = 0;
     int currentCol = 0;
 
@@ -21,7 +23,7 @@ public class Player : MonoBehaviour
     {
         for (int s = 0; s < selections.Length; s++)
         {
-            for (int k = 0; k < 10; k++)
+            for (int k = 0; k < selections[0].cols.Length; k++)
             {
                 selections[s].cols[k].SetActive(false);
             }
@@ -64,7 +66,7 @@ public class Player : MonoBehaviour
         int[] hRows = new int[selections.Length];
         int finalResult = 0;
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < selections[0].cols.Length; i++)
         {
             for (int j = 0; j < selections.Length; j++)
             {
@@ -93,7 +95,8 @@ public class Player : MonoBehaviour
 
         else
         {
-            if (ballTransform.position.x > 6)
+            if ((ballTransform.position.x > 0 && threshold > 0 && ballTransform.position.x > threshold) || 
+                (ballTransform.position.x < 0 && threshold < 0 && ballTransform.position.x < threshold))
             {
                 List<int> activePrePaddles = new List<int>();
 
@@ -187,7 +190,7 @@ public class Player : MonoBehaviour
         if (GameManager.instance.paused)
             return;
 
-        currentCol = (currentCol + 1) % 10;
+        currentCol = (currentCol + 1) % selections[0].cols.Length;
     }
 
     public void MoveLeft()
@@ -195,10 +198,10 @@ public class Player : MonoBehaviour
         if (GameManager.instance.paused)
             return;
 
-        currentCol = (currentCol - 1) % 10;
+        currentCol = (currentCol - 1) % selections[0].cols.Length;
 
         if (currentCol < 0)
-            currentCol += 10;
+            currentCol += selections[0].cols.Length;
     }
 
     public void MoveUp()
@@ -222,16 +225,6 @@ public class Player : MonoBehaviour
     void Update()
     {
         
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            EnableXGate();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            EnableHGate();
-        }
-
         EnableSelection();
         UpdatePaddle();
     }

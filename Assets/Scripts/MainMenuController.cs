@@ -9,10 +9,9 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] public Button[] selectedButtons;
     int currentSelected = 0;
 
-    public GameData data;
-
     public GameObject optionsMenu;
     public GameObject creditsMenu;
+    public GameObject startMenu;
 
 
     public void MoveDown()
@@ -48,10 +47,20 @@ public class MainMenuController : MonoBehaviour
 
     public void StartGame()
     {
-        if (data.Qbits == 2)
-            SceneManager.LoadScene("Game 2Bits");
+        if (Application.isMobilePlatform)
+        {
+            UIManager.instance.data.isPvp = false;
+            if (UIManager.instance.data.Qbits == 2)
+                SceneManager.LoadScene("Game 2Bits");
+            else
+                SceneManager.LoadScene("Game 3Bits");
+        }
+
         else
-            SceneManager.LoadScene("Game 3Bits");
+        {
+            UIManager.instance.mainMenuLocked = true;
+            startMenu.SetActive(true);
+        }
     }
 
     public void ShowCredits()
