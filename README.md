@@ -2,6 +2,12 @@
 
 Psiket-QPong is a unique quantum-inspired version of the classic Pong game, developed for the PsiKet Academy. The game incorporates quantum mechanics principles to create a novel and challenging gameplay experience.
 
+
+
+https://github.com/niloufarmj/Psiket-QPong/assets/46811379/73eccf89-9b7a-478a-ac05-e62d8e09720a
+
+
+
 ## Features
 
 - **Configurable Qubits**: Players can set the number of qubits (2 or 3) used in the game, for both Singleplayer and Multiplayer modes.
