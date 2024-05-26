@@ -20,4 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game 3Bits PVP.unity
     guid: fa5818ea5e8215e428356c143ca211d6
+  - enabled: 1
+    path: Assets/Scenes/Game 2Bits Guide.unity
+    guid: 84df9fc72e194934c85727754158ac53
+  - enabled: 1
+    path: Assets/Scenes/Game 2Bits Guide PVP.unity
+    guid: 3205afd2ac4f72040936fa13072ce013
   m_configObjects: {}

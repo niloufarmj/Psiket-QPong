@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
 
     public void EnableHGate()
     {
-        if (GameManager.instance.paused)
+        if (GameManager.instance && GameManager.instance.paused)
             return;
 
         xGates[currentRow].cols[currentCol].SetActive(false);
@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
 
     public void EnableXGate()
     {
-        if (GameManager.instance.paused)
+        if (GameManager.instance && GameManager.instance.paused)
             return;
 
         hGates[currentRow].cols[currentCol].SetActive(false);
@@ -187,7 +187,7 @@ public class Player : MonoBehaviour
 
     public void MoveRight()
     {
-        if (GameManager.instance.paused)
+        if (GameManager.instance && GameManager.instance.paused)
             return;
 
         currentCol = (currentCol + 1) % selections[0].cols.Length;
@@ -195,7 +195,7 @@ public class Player : MonoBehaviour
 
     public void MoveLeft()
     {
-        if (GameManager.instance.paused)
+        if (GameManager.instance && GameManager.instance.paused)
             return;
 
         currentCol = (currentCol - 1) % selections[0].cols.Length;
@@ -206,7 +206,7 @@ public class Player : MonoBehaviour
 
     public void MoveUp()
     {
-        if (GameManager.instance.paused)
+        if (GameManager.instance && GameManager.instance.paused)
             return;
 
         currentRow = (currentRow - 1) % selections.Length;
@@ -217,7 +217,7 @@ public class Player : MonoBehaviour
 
     public void MoveDown()
     {
-        if (GameManager.instance.paused)
+        if (GameManager.instance && GameManager.instance.paused)
             return;
 
         currentRow = (currentRow + 1) % selections.Length;

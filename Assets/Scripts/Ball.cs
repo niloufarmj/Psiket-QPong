@@ -121,6 +121,8 @@ public class Ball : MonoBehaviour
     {
         if (collision.gameObject.tag == "Left")
         {
+            if (GameManager.instance.data.soundOn)
+                GameManager.instance.outSound.Play();
             rightScore++;
             textR.text = rightScore.ToString();
             textRUp.text = rightScore.ToString();
@@ -131,6 +133,8 @@ public class Ball : MonoBehaviour
         }
         else if (collision.gameObject.tag == "Right")
         {
+            if (GameManager.instance.data.soundOn)
+                GameManager.instance.outSound.Play();
             leftScore++;
             textL.text = leftScore.ToString();
             textLUp.text = leftScore.ToString();
@@ -142,12 +146,16 @@ public class Ball : MonoBehaviour
 
         if (collision.gameObject.tag == "Wall")
         {
+            if (GameManager.instance.data.soundOn)
+                GameManager.instance.hitSound.Play();
             EmitParticle(8);
             GameManager.instance.cameraShake.StartShake(0.035f, 0.035f);
         }
 
         if (collision.gameObject.tag == "Paddle")
         {
+            if (GameManager.instance.data.soundOn)
+                GameManager.instance.hitSound.Play();
             EmitParticle(16);
             GameManager.instance.cameraShake.StartShake(0.025f, 0.025f);
         }

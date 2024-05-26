@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject mobileControls;
 
+    public AudioSource hitSound, outSound;
+
     public bool paused = false;
     public bool reset = false;
 
@@ -134,36 +136,25 @@ public class GameManager : MonoBehaviour
             HandlePause();
         }
 
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            HandleSelect();
-        }
     }
 
 
     public void HandleDown(int player)
     {
-        if (paused)
-        {
-            pauseController.MoveDown();
-        }
-        else
+        if (!paused)
         {
             if (player == 1)
                 rightPlayerController.MoveDown();
             else
                 leftPlayerController.MoveDown();
         }
+
     }
 
     public void HandleUp(int player)
     {
-        if (paused)
-        {
-            pauseController.MoveUp();
-        }
-        else
-        {
+        if (!paused)
+        { 
             if (player == 1)
                 rightPlayerController.MoveUp();
             else
@@ -187,13 +178,6 @@ public class GameManager : MonoBehaviour
                 rightPlayerController.MoveLeft();
             else
                 leftPlayerController.MoveLeft();
-    }
-
-
-    public void HandleSelect()
-    {
-        if (paused)
-            pauseController.Select();
     }
 
 

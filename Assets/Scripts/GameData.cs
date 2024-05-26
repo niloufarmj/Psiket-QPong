@@ -7,4 +7,5 @@ public class GameData : ScriptableObject
     public float ballSpeed;
     public int Qbits;
     public bool isPvp;
+    public bool soundOn;
 }
